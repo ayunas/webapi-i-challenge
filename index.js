@@ -42,9 +42,35 @@ server.get('/api/users/:id', (req,res) => {
         res.status(err.code).json({success : false, message : err.message});
     })
 })
+//************************************************************************* */
+server.delete('/api/users/:id', (req,res) => {
+    const userID = req.params.id;
+    db.remove(userID)
+    .then( deleted => {
+        res.status(204).end();
+    })
+    .catch( err => {
+        res.status(err.code).json({success : false, message: err.message})
+    })
+})
+//************************************************************************* */
+server.put('/api/users/:id', (req,res) => {
+    const userID = req.params.id;
+    const changes = req.body;
 
-
-
+    db.update(userID, changes)
+    .then( updated => {
+        if (updated) {
+            res.status(200).json({ success : true, updated});
+        } else {
+            res.status(404).json({success : false, message: 'cannot find user id to update'})
+        }
+    })
+    .catch( err => {
+        res.status(err.code).json({ success : false, message : err.message})
+    })
+})
+//************************************************************************* */
 
 server.listen(5000, () => {
     console.log('listening on port 5000');
